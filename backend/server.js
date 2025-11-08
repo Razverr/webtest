@@ -12,12 +12,12 @@ app.use(bodyParser.json());
 // Serve React build folder
 app.use(express.static(path.join(__dirname, "../frontend/build")));
 
-// Catch-all route to serve index.html for React routing
-app.get("/*", (req, res) => {
+// Catch-all route for React frontend
+app.get('/:path(*)', (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
 });
 
-// API route
+// API endpoint
 app.post("/calculate", (req, res) => {
     const { a, b, op } = req.body;
     let result;
