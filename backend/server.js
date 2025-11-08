@@ -1,14 +1,25 @@
 ﻿console.log("🚀 Starting backend...");
+
 const express = require("express");
 const bodyParser = require("body-parser");
-const cors = require("cors"); // ✅ add this
+const cors = require("cors");
+const path = require("path"); // ✅ required to serve React build
 const calculator = require("./build/Release/calculator.node");
 
 const app = express();
-app.use(cors()); // ✅ allow requests from React (localhost:3000)
+
+// ✅ Middleware
+app.use(cors()); // allow cross-origin requests (optional if frontend served here)
 app.use(bodyParser.json());
 
-// Example endpoint: POST /calculate
+// ✅ Serve React frontend (production build)
+app.use(express.static(path.join(__dirname, "../frontend/build")));
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
+});
+
+// ✅ API endpoint
 app.post("/calculate", (req, res) => {
     const { a, b, op } = req.body;
 
@@ -24,4 +35,6 @@ app.post("/calculate", (req, res) => {
     res.json({ result });
 });
 
-app.listen(5000, () => console.log("✅ Server running on port 5000"));
+// ✅ Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
